@@ -1,0 +1,137 @@
+create table Users(
+	userid serial PRIMARY KEY,
+	username text NOT NULL,
+	password text NOT NULL
+);
+
+
+create table email(
+	emailid serial PRIMARY KEY,
+	username text NOT NULL,
+	password text NOT NULL,
+	email text NOT NULL
+);
+
+create table allip(
+	ipid serial PRIMARY KEY,
+	ipadress text NOT NULL,
+	userid int, 
+	CONSTRAINT userid_fk
+		FOREIGN KEY (userid)
+			REFERENCES Users(userid)
+	ON DELETE CASCADE
+);
+
+create table messagehash(
+	fileid serial PRIMARY KEY,
+	ownerid int NOT NULL,
+	filename text NOT NULL,
+	falepath text NOT NULL,
+	constraint ownerid_fk
+	foreign key (ownerid)
+	references Users(userid)
+	ON DELETE CASCADE
+);
+
+
+create table groups (
+	groupid serial PRIMARY KEY,
+	groupname text NOT NULL,
+	descr text
+);
+
+create table groupusers(
+	userid int NOT NULL,
+	groupid int NOT NULL,
+	groupuserpk serial PRIMARY KEY,
+	constraint userid_fk
+	foreign key (userid)
+	references Users(userid) ON DELETE CASCADE,
+	constraint groupid_fk
+	foreign key (groupid)
+	references groups(groupid) ON DELETE CASCADE
+);
+
+create table bfriends(
+	bfriendid serial PRIMARY KEY,
+	username text NOT NULL,
+	userid int NOT NULL,
+	constraint userid_fk
+	foreign key (userid)
+	references Users(userid)
+	ON DELETE CASCADE
+);
+
+create table blacklist(
+	baduserid int NOT NULL,
+	cause text,
+	time_of_ban time NOT NULL,
+	banuserpk int NOT NULL,
+	constraint banuserpk_fk
+	foreign key (banuserpk)
+	references Users(userid)
+	ON DELETE CASCADE
+);
+
+create table logs(
+	logid serial PRIMARY KEY,
+	logfilename text,
+	userid int NOT NULL,
+	constraint userid_fk
+	foreign key (userid)
+	references Users(userid)
+);
+
+create table Channel(
+	channelid serial PRIMARY KEY,
+	channelname text NOT NULL,
+	descr text
+);
+
+create table Channel_users(
+	userid int NOT NULL,
+	channelid int NOT NULL,
+	channeluserpk serial PRIMARY KEY,
+	constraint userid_fk 
+	foreign key (userid)
+	references Users(userid)
+	ON DELETE CASCADE,
+	constraint channelid_fk
+	foreign key (channelid)
+	references Channel(channelid)
+	ON DELETE CASCADE
+);
+
+create table Channel_users_admin(
+	adminpk serial PRIMARY KEY,
+	adminuserid int NOT NULL,
+	channelid int NOT NULL,
+	constraint adminuserid_fk
+	foreign key(adminuserid)
+	references Users(userid)
+	ON DELETE CASCADE,
+	constraint channelid_fk
+	foreign key (channelid)
+	references Channel(channelid)
+	ON DELETE CASCADE
+);
+
+create table sp_chat(
+	sp_chatid serial PRIMARY KEY,
+	chatname text,
+	userid int NOT NULL,
+	constraint userid_fk
+	foreign key (userid)
+	references Users(userid)
+	ON DELETE CASCADE
+);
+
+create table bot(
+	botid serial PRIMARY KEY,
+	botname text NOT NULL,
+	botfunc text NOT NULL,
+	sp_chatid int NOT NULL,
+	constraint sp_chatid_fk
+	foreign key (sp_chatid)
+	references sp_chat(sp_chatid)
+);
