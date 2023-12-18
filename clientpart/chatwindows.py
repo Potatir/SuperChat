@@ -15,6 +15,9 @@ client_socket = socket.socket(AF_INET, SOCK_STREAM)
 client_socket.connect(ADDR)
 
 
+
+
+
 def open_new_window():
 
 
