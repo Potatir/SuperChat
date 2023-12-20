@@ -3,6 +3,7 @@ from tkinter import ttk
 import socket
 from socket import AF_INET, SOCK_STREAM
 import time
+import test
 
 HOST = '127.0.0.1'
 PORT = 1111
@@ -115,7 +116,9 @@ def open_login_window():
         answer = client_socket.recv(BUFSIZ).decode("utf-8")
         if answer == 'success':
             print('good')
-            new_window.destroy()    
+            new_window.destroy()
+            window.destroy()  
+            test.open_chat()  
         elif answer == 'uncorrect password':
             print("incorrect password")
             log_label['text'] = 'incorrect password!'

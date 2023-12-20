@@ -56,11 +56,11 @@ def autorization(c, addr, BUFSIZ, clients):
                 if pssword in userlist:
                     c.send('success'.encode('utf-8'))
                     print('успешно')
-                    cur.execute(f'select userid from Users where username = {usrnm}')
+                    cur.execute(f"select userid from Users where username = '{usrnm}'")
                     usrid = ''
                     for i in cur.fetchall():
-                        usrid = i[0]
-                    cur.execute(f'UPDATE allip SET ipadress = {addr[0]} where userid = {usrid}')
+                        usrid = int(i[0])
+                    cur.execute(f"UPDATE allip SET ipadress = '{addr[0]}' where userid = '{usrid}'")
                     conn.commit()
                     clients[c] = usrnm
                     chatset.main(c, addr, BUFSIZ, clients, usrid, usrnm)
