@@ -2,7 +2,7 @@ import socket
 from socket import AF_INET, SOCK_STREAM
 import psycopg2
 
-def main(c, addr, BUFSIZ, clients, usrid):
+def main(c, addr, BUFSIZ, clients, usrid, usrnm):
     
     datalist = []
     partner = ''
@@ -50,11 +50,12 @@ def main(c, addr, BUFSIZ, clients, usrid):
             else:
                 c.send('error'.encode('utf-8'))
         elif msglist[0] == '[SEND]':
-            broadcast(clients, partner, msglist[1])
+            broadcast(clients, partner, msglist[1], usrnm)
 
 
     
-def broadcast(clients, partner, msg):
+def broadcast(clients, partner, msg, usrnm):
+    msg = usrnm + ': ' + msg
     partnerinf = clients[partner]
     for sock in clients:
         if sock == partnerinf:

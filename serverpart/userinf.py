@@ -63,7 +63,7 @@ def autorization(c, addr, BUFSIZ, clients):
                     cur.execute(f'UPDATE allip SET ipadress = {addr[0]} where userid = {usrid}')
                     conn.commit()
                     clients[c] = usrnm
-                    chatset.main(c, addr, BUFSIZ, clients, usrid)
+                    chatset.main(c, addr, BUFSIZ, clients, usrid, usrnm)
                 else:
                     c.send('uncorrect password'.encode('utf-8'))
                     print('не успешно')
