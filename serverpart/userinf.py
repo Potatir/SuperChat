@@ -1,6 +1,6 @@
 import socket
 import psycopg2
-
+import chatset
 
 def registration(c, addr, BUFSIZ):
     conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
@@ -32,7 +32,7 @@ def registration(c, addr, BUFSIZ):
     print('добавденно')
     c.send("success".encode("utf-8"))
 
-def autorization(c, addr, BUFSIZ):
+def autorization(c, addr, BUFSIZ, clients):
     userlist = []
     
     conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
@@ -56,6 +56,14 @@ def autorization(c, addr, BUFSIZ):
                 if pssword in userlist:
                     c.send('success'.encode('utf-8'))
                     print('успешно')
+                    cur.execute(f'select userid from Users where username = {usrnm}')
+                    usrid = ''
+                    for i in cur.fetchall():
+                        usrid = i[0]
+                    cur.execute(f'UPDATE allip SET ipadress = {addr[0]} where userid = {usrid}')
+                    conn.commit()
+                    clients[c] = usrnm
+                    chatset.main(c, addr, BUFSIZ, clients, usrid)
                 else:
                     c.send('uncorrect password'.encode('utf-8'))
                     print('не успешно')

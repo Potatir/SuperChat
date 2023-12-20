@@ -21,7 +21,7 @@ def new_user(c, addr, BUFSIZ):
                 userinf.registration(c, addr, BUFSIZ)
             elif mess == 'autorization':
                 print('авторизация')
-                userinf.autorization(c, addr, BUFSIZ)
+                userinf.autorization(c, addr, BUFSIZ, clients)
         except ConnectionResetError:
             print("пользователь %s:%s отключен" % addr)
             break
