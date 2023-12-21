@@ -17,7 +17,8 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
         datalist.append(i[1])
     datatext = ''
     for i in datalist:
-        datatext = datatext + i + '.'
+        datatext = datatext + i + ' '
+    datatext.strip()
     c.send(datatext.encode('utf-8'))
     datalist = []
     cur.execute(f'select username from bfriends where userid = {usrid}')
@@ -25,7 +26,8 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
         datalist.append(i[0])
     datatext = ''
     for i in datalist:
-        datatext = datatext + i + '.'
+        datatext = datatext + i + ' '
+    datatext.strip()
     c.send(datatext.encode('utf-8'))
     while True:
         msg = c.recv(BUFSIZ).decode('utf-8')
