@@ -20,7 +20,7 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
         datatext = datatext + i + '.'
     c.send(datatext.encode('utf-8'))
     datalist = []
-    cur.execute(f'select bfriendid from bfriends where userid = {usrid}')
+    cur.execute(f'select username from bfriends where userid = {usrid}')
     for i in cur.fetchall():
         datalist.append(i[0])
     datatext = ''
