@@ -1,4 +1,5 @@
 from customtkinter import *
+
 def regwin():
     win = CTk()
     win.geometry("600x580")
@@ -41,6 +42,3 @@ def regwin():
     CTkButton(master=frame, text="Зарегистрироваться", fg_color="#601E88", hover_color="#E44982",
               font=("Arial Bold", 12), text_color="#ffffff", width=225).pack(anchor="w", pady=(40, 0), padx=(25, 0))
     win.mainloop()
-
-
-regwin()
