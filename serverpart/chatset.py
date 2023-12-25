@@ -11,39 +11,41 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
     cur.execute(f'select username from Users where userid = {usrid}')
     for i in cur.fetchall():
         datalist.append(i[0])
-    cur.execute(f'select name, sname, avatarcode from profile where userid = {usrid}')
+    cur.execute(f'select name, sname from profile where userid = {usrid}')
     for i in cur.fetchall():
         datalist.append(i[0])
         datalist.append(i[1])
-        datalist.append(i[2])
+
     datatext = ''
     for i in datalist:
-        datatext = datatext + i + '.'
+        datatext = datatext + i + ' '
+    datatext.strip()
     c.send(datatext.encode('utf-8'))
     datalist = []
-    cur.execute(f'select bfriendid from bfriends where userid = {usrid}')
+    cur.execute(f'select username from bfriends where userid = {usrid}')
     for i in cur.fetchall():
         datalist.append(i[0])
     datatext = ''
     for i in datalist:
-        datatext = datatext + i + '.'
+        datatext = datatext + i + ' '
+    datatext.strip()
     c.send(datatext.encode('utf-8'))
     while True:
         msg = c.recv(BUFSIZ).decode('utf-8')
         msglist = msg.split(': ')
         if msglist[0] == '[FIND]':
-            cur.execute(f'select userid from users where username = {msglist[1]}')
+            cur.execute(f"select userid from users where username = '{msglist[1]}'")
             bf_usrid = ''
             for i in cur.fetchall():
                 bf_usrid = i[0]
             if bf_usrid != '':
-                cur.execute(f'insert into bfriends(bfriendid, username, userid) values ({bf_usrid}, {msglist[1]}, {usrid})')
+                cur.execute(f"insert into bfriends(bfriendid, username, userid) values ({bf_usrid}, '{msglist[1]}', {usrid})")
                 conn.commit()
                 c.send(msglist[1].encode('utf-8'))
             else:
                 c.send('uncorrect'.encode('utf-8'))
         elif msglist[0] == '[CHOOSE]':
-            cur.execute(f'select userid from Users where username = {msglist[1]}')
+            cur.execute(f"select userid from Users where username = '{msglist[1]}'")
             if cur.fetchall() is not None:
                 partner = msglist[1]
                 c.send('success'.encode('utf-8'))
