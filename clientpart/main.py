@@ -1,8 +1,9 @@
 from customtkinter import *
 import socket
 import time
+import mainwin
 
-ADDR = '127.0.0.1'
+ADDR = '192.168.0.102'
 PORT = 1111
 BUFSIZ = 1024
 
@@ -15,17 +16,17 @@ client_socket.connect((ADDR, PORT))
 def regwin():
     def submit_reg():
         client_socket.send('registration'.encode('utf-8'))
-        time.sleep(0.04)
+        time.sleep(0.15)
         client_socket.send(entrylog.get().encode('utf-8'))
-        time.sleep(0.04)
+        time.sleep(0.15)
         client_socket.send(entrypass.get().encode('utf-8'))
-        time.sleep(0.04)
+        time.sleep(0.15)
         client_socket.send(entrymail.get().encode('utf-8'))
-        time.sleep(0.04)
+        time.sleep(0.15)
         client_socket.send(entryname.get().encode('utf-8'))
-        time.sleep(0.04)
+        time.sleep(0.15)
         client_socket.send(entrysname.get().encode('utf-8'))
-        time.sleep(0.04)
+        time.sleep(0.15)
         if client_socket.recv(BUFSIZ).decode('utf-8') == 'success':
             win.destroy()
 
@@ -78,12 +79,13 @@ def regwin():
 
 def submit_autoriz():
     client_socket.send('autorization'.encode('utf-8'))
-    time.sleep(0.05)
+    time.sleep(0.15)
     client_socket.send(username.get().encode('utf-8'))
-    time.sleep(0.05)
+    time.sleep(0.15)
     client_socket.send(passentry.get().encode('utf-8'))
     if client_socket.recv(BUFSIZ).decode('utf-8') == 'success':
         win.destroy()
+        mainwin.mainwin_start(client_socket, BUFSIZ)
 
 
 win = CTk()
