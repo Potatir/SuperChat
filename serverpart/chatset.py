@@ -34,8 +34,10 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
         for i in datalist:
             datatext = datatext + i + ' '
         datatext.strip()
+        time.sleep(0.15)
         c.send(datatext.encode('utf-8'))
     else:
+        time.sleep(0.15)
         c.send('pass'.encode('utf-8'))
     while True:
         msg = c.recv(BUFSIZ).decode('utf-8')
@@ -62,6 +64,8 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
                 c.send('error'.encode('utf-8'))
         elif msglist[0] == '[SEND]':
             print('send: ' + msglist[1])
+            print(clients)
+            print(clients[partner])
             broadcast(clients, partner, msglist[1], usrnm)
 
 
@@ -69,6 +73,8 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
 def broadcast(clients, partner, msg, usrnm):
     msg = usrnm + ': ' + msg
     partnerinf = clients[partner]
-    for sock in clients:
+    for sock in clients.values():
         if sock == partnerinf:
+            print('good')
             sock.send(bytes(msg, 'utf-8'))
+            print('ended')

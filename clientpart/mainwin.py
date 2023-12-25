@@ -1,5 +1,5 @@
 from customtkinter import *
-
+from threading import Thread
 
 def mainwin_start(client_socket, BUFSIZ):
     def gg(event, obj):
@@ -30,6 +30,7 @@ def mainwin_start(client_socket, BUFSIZ):
                     chat_label.configure(text = teext)
             except OSError:
                 print('gg')
+                break
 
 
 
@@ -97,4 +98,6 @@ def mainwin_start(client_socket, BUFSIZ):
     chat_frame.pack(side = 'top', pady = (5,0))
 
     frame.pack(expand=True, side="right")
+    receive_thread = Thread(target=receive)
+    receive_thread.start()
     win.mainloop()
