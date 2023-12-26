@@ -4,14 +4,37 @@ import time
 
 
 def mainwin_start(client_socket, BUFSIZ):
+    global thread_stop
+    thread_stop = False
     bflist = []
+    def on_closing():
+        win.destroy()
+        global thread_stop
+        thread_stop = True
     def gg(event, obj):
         mess = '[CHOOSE]: ' + obj.cget('text')
         client_socket.send(mess.encode('utf-8'))
         choosepart.configure(text = obj.cget('text'))
-        obj.configure(bg_color = '#666464')
-        time.sleep(0.5)
-        obj.configure(bg_color = '#ffffff')
+        chat_label.configure(text = '')
+        mess = client_socket.recv(BUFSIZ).decode('utf-8')
+        print(mess)
+        mess1_list = mess.split(':')
+        print(mess1_list)
+        if mess1_list[0] == 'pass':
+            pass
+        elif mess1_list[0] == '[MESSAGES]':
+            mess2_list = mess1_list[1].split(' ')
+            mess2_list.pop(-1)
+            print(mess2_list)
+            for i in mess2_list:
+                mess3_list = i.split('-')
+                print(mess3_list)
+                
+                text = chat_label.cget('text') + mess3_list[0] + ': ' + mess3_list[1] + '\n'
+                chat_label.configure(text = text)
+
+            
+
     def new_chat(name):
         if name not in bflist:
             widget = CTkLabel(master=chatchoose,text = name,font=("Arial Bold", 30), text_color='purple',width=590, height= 100, fg_color='#ffffff', bg_color='#ffffff')
@@ -44,18 +67,22 @@ def mainwin_start(client_socket, BUFSIZ):
         else:
             pass
     def receive():
+        global thread_stop
         while True:
-            try:
-                mess = client_socket.recv(BUFSIZ).decode('utf-8')
-                mess_arr = mess.split(': ')
-                if choosepart.cget('text') == mess_arr[0]:
-                    teext = chat_label.cget('text')+'\n'+choosepart.cget('text') +': '+ mess_arr[1]
-                    chat_label.configure(text = teext)
-                elif len(mess_arr) == 2:
-                    new_chat(mess_arr[0])
-            except OSError:
-                print('gg')
+            if thread_stop:
                 break
+            else:
+                try:
+                    mess = client_socket.recv(BUFSIZ).decode('utf-8')
+                    mess_arr = mess.split(': ')
+                    if choosepart.cget('text') == mess_arr[0]:
+                        teext = chat_label.cget('text')+'\n'+choosepart.cget('text') +': '+ mess_arr[1]
+                        chat_label.configure(text = teext)
+                    elif len(mess_arr) == 2:
+                        new_chat(mess_arr[0])
+                except OSError:
+                    print('gg')
+                    break
 
 
 
@@ -76,7 +103,8 @@ def mainwin_start(client_socket, BUFSIZ):
     win = CTk()
     win.geometry("1600x900")
     win.resizable(False, False)
-    
+    win.title('SuperChat')
+    win.protocol("WM_DELETE_WINDOW", on_closing)
     frame2 = CTkFrame(win, fg_color='purple', width=600, height=900)
 
     userinf = CTkFrame(frame2, fg_color="#ffffff", width=590, height=150)

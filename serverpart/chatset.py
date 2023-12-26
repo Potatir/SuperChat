@@ -74,22 +74,42 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
             if cur.fetchall() is not None:
                 partner = msglist[1]
                 c.send('success'.encode('utf-8'))
+                cur.execute(f"select * from messages where from_username = '{usrnm}' and to_username = '{partner}'or from_username = '{partner}' and to_username = '{usrnm}'")
+                mess = cur.fetchall()
+                print(mess)
+                messlist = ''
+                if mess != []:
+                    for i in mess:
+                        messs_text =i[1] +'-'+ i[2]
+                        messlist = messlist + messs_text + ' '
+                    messlist.strip()
+                    messlist = '[MESSAGES]:'+messlist
+                    c.send(messlist.encode('utf-8'))     
+                else:
+                    c.send('pass'.encode('utf-8'))
             else:
                 c.send('error'.encode('utf-8'))
         elif msglist[0] == '[SEND]':
             print('send: ' + msglist[1])
             print(clients)
-            print(clients[partner])
-            broadcast(clients, partner, msglist[1], usrnm, cur)
+            try:
+                print(clients[partner])
+            except KeyError:
+                pass
+            broadcast(clients, partner, msglist[1], usrnm, cur, conn)
 
 
     
-def broadcast(clients, partner, msg, usrnm, cur):
-    mess = usrnm + ': ' + msg
-    partnerinf = clients[partner]
+def broadcast(clients, partner, msg, usrnm, cur, conn):
     cur.execute(f"insert into messages(from_username, mess_text, to_username) values ('{usrnm}', '{msg}','{partner}')")
-    for sock in clients.values():
-        if sock == partnerinf:
-            print('good')
-            sock.send(bytes(mess, 'utf-8'))
-            print('ended')
+    conn.commit()
+    try:
+        mess = usrnm + ': ' + msg
+        partnerinf = clients[partner]
+        for sock in clients.values():
+            if sock == partnerinf:
+                print('good')
+                sock.send(bytes(mess, 'utf-8'))
+                print('ended')
+    except KeyError:
+        pass
