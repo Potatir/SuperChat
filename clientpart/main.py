@@ -3,7 +3,7 @@ import socket
 import time
 import mainwin
 
-ADDR = '192.168.0.102'
+ADDR = '10.250.0.15'
 PORT = 1111
 BUFSIZ = 1024
 

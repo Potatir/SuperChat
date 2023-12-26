@@ -1,25 +1,48 @@
 from customtkinter import *
 from threading import Thread
+import time
+
 
 def mainwin_start(client_socket, BUFSIZ):
+    bflist = []
     def gg(event, obj):
         mess = '[CHOOSE]: ' + obj.cget('text')
         client_socket.send(mess.encode('utf-8'))
         choosepart.configure(text = obj.cget('text'))
+        obj.configure(bg_color = '#666464')
+        time.sleep(0.5)
+        obj.configure(bg_color = '#ffffff')
     def new_chat(name):
-        widget = CTkLabel(master=chatchoose,text = name,font=("Arial Bold", 30), text_color='purple',width=590, height= 100, fg_color='#ffffff')
-        widget.pack(side = 'top', pady = (3, 0))
-        widget.bind("<1>", lambda event, obj=widget: gg(event, obj))
+        if name not in bflist:
+            widget = CTkLabel(master=chatchoose,text = name,font=("Arial Bold", 30), text_color='purple',width=590, height= 100, fg_color='#ffffff', bg_color='#ffffff')
+            widget.pack(side = 'top', pady = (3, 0))
+            widget.bind("<1>", lambda event, obj=widget: gg(event, obj))
+            bflist.append(name)
+        else:
+            pass
     def submut_find():
         mess = '[FIND]: ' + find_field.get()
         client_socket.send(mess.encode('utf-8'))
-        if client_socket.recv(BUFSIZ).decode('utf-8') == find_field.get():
+        print('отправленно')
+        time.sleep(0.15)
+        mess = client_socket.recv(512).decode('utf-8')
+        time.sleep(0.15)
+        print('принято: ' + mess)
+        if mess == find_field.get():
             new_chat(find_field.get())
+            find_field.delete(0, END)
+        elif mess == 'uncorrect':
+            find_button.configure(text = 'no user like this')
+            find_field.delete(0, END)
     def send():
-        mess = '[SEND]: ' + chat_entry.get()
-        client_socket.send(mess.encode('utf-8'))
-        text = chat_label.cget('text')+'\n'+username.cget('text') +': ' + chat_entry.get()
-        chat_label.configure(text = text)
+        if chat_entry.get() != '':
+            mess = '[SEND]: ' + chat_entry.get()
+            client_socket.send(mess.encode('utf-8'))
+            text = chat_label.cget('text')+'\n'+username.cget('text') +': ' + chat_entry.get()
+            chat_label.configure(text = text)
+            chat_entry.delete(0, END)
+        else:
+            pass
     def receive():
         while True:
             try:
@@ -28,6 +51,8 @@ def mainwin_start(client_socket, BUFSIZ):
                 if choosepart.cget('text') == mess_arr[0]:
                     teext = chat_label.cget('text')+'\n'+choosepart.cget('text') +': '+ mess_arr[1]
                     chat_label.configure(text = teext)
+                elif len(mess_arr) == 2:
+                    new_chat(mess_arr[0])
             except OSError:
                 print('gg')
                 break
@@ -63,6 +88,7 @@ def mainwin_start(client_socket, BUFSIZ):
     
     chatchoose = CTkFrame(frame2,  fg_color="purple", width=590, height=740)
     chatchoose.pack_propagate(False)
+
     if mess2 != 'pass':
         for i in mess2_list:
             new_chat(i)
@@ -84,18 +110,17 @@ def mainwin_start(client_socket, BUFSIZ):
     find_button.pack(side = 'left', padx = (5,0))
     
     findframe.pack(side = 'top', pady = (5, 0))   
-    
-    chat_frame = CTkFrame(master = frame, width=990, height=835, fg_color='purple')
-    chat_frame.pack_propagate(False)
+    chat_frame = CTkScrollableFrame(master = frame, width=990, height=835, fg_color='purple')
     choosepart = CTkLabel(master=chat_frame, width=980, height=40, fg_color='purple', text='someone', text_color='#ffffff', font=("Arial Bold", 30))
-    choosepart.pack(side = 'top', pady = (5,0))
+    choosepart.pack(side = 'top', pady = 5)
     chat_label = CTkLabel(master=chat_frame,text = '', width = 980, height= 725, fg_color='#ffffff', text_color='purple', font=("Arial Bold", 30))
-    chat_label.pack(side = 'top', pady = (5,0))
+    chat_label.pack(side = 'top', pady = 5)
     chat_entry = CTkEntry(master=chat_frame, width= 900, height=50, fg_color='#ffffff', text_color='purple')
-    chat_entry.pack(side = 'left',padx = (5,0))
+    chat_entry.pack(side = 'left',padx = 5)
     send_button = CTkButton(master = chat_frame,command=send, width= 75, height=50, fg_color='#ffffff', text='SEND', text_color='purple')
-    send_button.pack(side='left', padx = (5,0))
-    chat_frame.pack(side = 'top', pady = (5,0))
+    send_button.pack(side='left', padx =5)
+   
+    chat_frame.pack(side = 'top', pady = 5)
 
     frame.pack(expand=True, side="right")
     receive_thread = Thread(target=receive)
