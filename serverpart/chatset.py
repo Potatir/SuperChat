@@ -6,7 +6,7 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
     
     datalist = []
     partner = ''
-    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
+    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '123', port = '5432')
     cur = conn.cursor()
     cur.execute(f'select username from Users where userid = {usrid}')
     for i in cur.fetchall():
@@ -45,15 +45,29 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
         if msglist[0] == '[FIND]':
             print('find: ' + msglist[1])
             cur.execute(f"select userid from users where username = '{msglist[1]}'")
+            gg =  cur.fetchall()
+            print(gg)
             bf_usrid = ''
-            for i in cur.fetchall():
+            for i in gg:
                 bf_usrid = i[0]
+            print(bf_usrid)
             if bf_usrid != '':
-                cur.execute(f"insert into bfriends( username, userid) values ('{msglist[1]}', {usrid})")
+                cur.execute(f"insert into bfriends(username, userid) values ('{msglist[1]}', {usrid})")
                 conn.commit()
-                c.send(msglist[1].encode('utf-8'))
+                print('good')
+                print(msglist[1])
+                time.sleep(0.15)
+                mess = msglist[1]
+                c.send(mess.encode('utf-8'))
+                c.send(mess.encode('utf-8'))
+                time.sleep(0.15)
+                print('sended')
             else:
+                time.sleep(0.15)
                 c.send('uncorrect'.encode('utf-8'))
+                c.send('uncorrect'.encode('utf-8'))
+                print('send uncorrect good')
+                time.sleep(0.15)
         elif msglist[0] == '[CHOOSE]':
             print('choose: ' + msglist[1])
             cur.execute(f"select userid from Users where username = '{msglist[1]}'")
