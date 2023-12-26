@@ -3,7 +3,7 @@ import psycopg2
 import chatset
 
 def registration(c, addr, BUFSIZ):
-    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '123', port = '5432')
+    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
     cur = conn.cursor()
     mess = c.recv(BUFSIZ).decode("utf-8")
     mess2 = c.recv(BUFSIZ).decode("utf-8")
@@ -35,7 +35,7 @@ def registration(c, addr, BUFSIZ):
 def autorization(c, addr, BUFSIZ, clients):
     userlist = []
     
-    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '123', port = '5432')
+    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
     cur = conn.cursor()
     while True:
         usrnm = c.recv(BUFSIZ).decode("utf-8")

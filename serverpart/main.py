@@ -32,7 +32,7 @@ def new_user(c, addr, BUFSIZ):
 clients = {}
 addresses = {}
 
-HOST = '10.250.0.15'
+HOST = '192.168.0.102'
 PORT = 1111
 BUFSIZ = 1024
 ADDR = (HOST, PORT)

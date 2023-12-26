@@ -6,7 +6,7 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
     
     datalist = []
     partner = ''
-    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '123', port = '5432')
+    conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
     cur = conn.cursor()
     cur.execute(f'select username from Users where userid = {usrid}')
     for i in cur.fetchall():
@@ -80,15 +80,16 @@ def main(c, addr, BUFSIZ, clients, usrid, usrnm):
             print('send: ' + msglist[1])
             print(clients)
             print(clients[partner])
-            broadcast(clients, partner, msglist[1], usrnm)
+            broadcast(clients, partner, msglist[1], usrnm, cur)
 
 
     
-def broadcast(clients, partner, msg, usrnm):
-    msg = usrnm + ': ' + msg
+def broadcast(clients, partner, msg, usrnm, cur):
+    mess = usrnm + ': ' + msg
     partnerinf = clients[partner]
+    cur.execute(f"insert into messages(from_username, mess_text, to_username) values ('{usrnm}', '{msg}','{partner}')")
     for sock in clients.values():
         if sock == partnerinf:
             print('good')
-            sock.send(bytes(msg, 'utf-8'))
+            sock.send(bytes(mess, 'utf-8'))
             print('ended')
