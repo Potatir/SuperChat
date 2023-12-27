@@ -135,3 +135,10 @@ create table bot(
 	foreign key (sp_chatid)
 	references sp_chat(sp_chatid)
 );
+
+Create table messages(
+	mess_id serial PRIMARY KEY,
+	from_username text,
+	mess_text text,
+	to_username text
+);

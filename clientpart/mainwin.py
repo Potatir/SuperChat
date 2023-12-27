@@ -32,6 +32,7 @@ def mainwin_start(client_socket, BUFSIZ):
                 
                 text = chat_label.cget('text') + mess3_list[0] + ': ' + mess3_list[1] + '\n'
                 chat_label.configure(text = text)
+            chat_frame.after(10, chat_frame._parent_canvas.yview_moveto, 1.0)
 
             
 
@@ -61,9 +62,10 @@ def mainwin_start(client_socket, BUFSIZ):
         if chat_entry.get() != '':
             mess = '[SEND]: ' + chat_entry.get()
             client_socket.send(mess.encode('utf-8'))
-            text = chat_label.cget('text')+'\n'+username.cget('text') +': ' + chat_entry.get()
+            text = chat_label.cget('text')+username.cget('text') +': ' + chat_entry.get() + '\n'
             chat_label.configure(text = text)
             chat_entry.delete(0, END)
+            chat_frame.after(10, chat_frame._parent_canvas.yview_moveto, 1.0)
         else:
             pass
     def receive():
