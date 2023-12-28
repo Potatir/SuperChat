@@ -38,28 +38,26 @@ def mainwin_start(client_socket, BUFSIZ):
 
     def new_chat(name):
         if name not in bflist:
-            mess = '[FIND]: ' + name
-            client_socket.send(mess.encode('utf-8'))
-            print('отправленно')
-            time.sleep(0.15)
-            mess = client_socket.recv(512).decode('utf-8')
-            time.sleep(0.15)
-            print('принято: ' + mess)
-            if mess == mess:
-                new_chat(name)
-                find_field.delete(0, END)
-            elif mess == 'uncorrect':
-                find_button.configure(text = 'no user like this')
-                find_field.delete(0, END)
             widget = CTkLabel(master=chatchoose,text = name,font=("Arial Bold", 30), text_color='purple',width=590, height= 100, fg_color='#ffffff', bg_color='#ffffff')
             widget.pack(side = 'top', pady = (3, 0))
             widget.bind("<1>", lambda event, obj=widget: gg(event, obj))
-
             bflist.append(name)
         else:
             pass
     def submut_find():
-        new_chat(find_field.get())
+        mess = '[FIND]: ' + find_field.get()
+        client_socket.send(mess.encode('utf-8'))
+        print('отправленно')
+        time.sleep(0.15)
+        mess = client_socket.recv(512).decode('utf-8')
+        time.sleep(0.15)
+        print('принято: ' + mess)
+        if mess == find_field.get():
+            new_chat(find_field.get())
+            find_field.delete(0, END)
+        elif mess == 'uncorrect':
+            find_button.configure(text = 'no user like this')
+            find_field.delete(0, END)
     def send():
         if chat_entry.get() != '':
             mess = '[SEND]: ' + chat_entry.get()
