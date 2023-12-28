@@ -3,7 +3,7 @@ import socket
 import time
 import mainwin
 
-ADDR = '192.168.206.186'
+ADDR = '192.168.206.68'
 PORT = 1111
 BUFSIZ = 1024
 
@@ -19,18 +19,16 @@ def regwin():
         win.destroy()
     
     def submit_reg():
+        delay_time = 0.45
         client_socket.send('registration'.encode('utf-8'))
-        time.sleep(0.15)
-        client_socket.send(entrylog.get().encode('utf-8'))
-        time.sleep(0.15)
-        client_socket.send(entrypass.get().encode('utf-8'))
-        time.sleep(0.15)
-        client_socket.send(entrymail.get().encode('utf-8'))
-        time.sleep(0.15)
-        client_socket.send(entryname.get().encode('utf-8'))
-        time.sleep(0.15)
-        client_socket.send(entrysname.get().encode('utf-8'))
-        time.sleep(0.15)
+        log = entrylog.get()
+        password = entrypass.get()
+        mail = entrymail.get()
+        name = entryname.get()
+        sname = entrysname.get()
+        mess_text = log + ' ' + password + ' ' + mail + ' ' + name + ' ' + sname
+        client_socket.send(mess_text.encode('utf-8'))
+
         mess = client_socket.recv(BUFSIZ).decode('utf-8')
         if mess == 'success':
             win.destroy()
@@ -89,10 +87,10 @@ def regwin():
 
 def submit_autoriz():
     client_socket.send('autorization'.encode('utf-8'))
-    time.sleep(0.15)
-    client_socket.send(username.get().encode('utf-8'))
-    time.sleep(0.15)
-    client_socket.send(passentry.get().encode('utf-8'))
+    usern = username.get()
+    passs = passentry.get()
+    mess_text = usern + ' ' + passs
+    client_socket.send(mess_text.encode('utf-8'))
     mess = client_socket.recv(BUFSIZ).decode('utf-8')
     if mess == 'success':
         win.destroy()

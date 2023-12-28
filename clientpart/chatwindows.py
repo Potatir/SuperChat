@@ -5,7 +5,7 @@ from socket import AF_INET, SOCK_STREAM
 import time
 import test
 
-HOST = '127.0.0.1'
+HOST = '192.168.206.68'
 PORT = 1111
 
 
