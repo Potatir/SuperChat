@@ -142,3 +142,10 @@ Create table messages(
 	mess_text text,
 	to_username text
 );
+create table profile(
+	profile_id serial PRIMARY KEY,
+	userid int,
+	name text,
+	sname text,
+	constraint userid_fk foreign key (userid) references Users(userid)
+);

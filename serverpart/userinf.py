@@ -9,31 +9,22 @@ def registration(c, addr, BUFSIZ):
     conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
     cur = conn.cursor()
     mess = c.recv(BUFSIZ).decode("utf-8")
-    mess2 = c.recv(BUFSIZ).decode("utf-8")
-    mess3 = c.recv(BUFSIZ).decode("utf-8")
-    mess4 = c.recv(BUFSIZ).decode("utf-8")
-    mess5 = c.recv(BUFSIZ).decode("utf-8")
-    print('принято')
-    print(mess)
-    print(mess2)
-    print(mess3)
-    print(mess4)
-    print(mess5)
+    mess_list = mess.split(' ')
     reg1 = re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$')
     reg2 = re.compile(r'([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+')
-    if re.fullmatch(reg1, mess2):
-        if re.fullmatch(reg2, mess3):
+    if re.fullmatch(reg1, mess_list[1]):
+        if re.fullmatch(reg2, mess_list[2]):
             cur.execute(f"""
-                        insert into Users(username, password) values ('{mess}','{mess2}');
-                        insert into email(username, password, email) values('{mess}','{mess2}','{mess3}');
+                        insert into Users(username, password) values ('{mess_list[0]}','{mess_list[1]}');
+                        insert into email(username, password, email) values('{mess_list[0]}','{mess_list[1]}','{mess_list[2]}');
                         """)
             conn.commit()
-            cur.execute(f"select userid from Users where username = '{mess}';")
+            cur.execute(f"select userid from Users where username = '{mess_list[0]}';")
             for i in cur.fetchall():
                 user_id = i[0]
             cur.execute(f"""
                         insert into allip(ipadress, userid) values('{addr[0]}',{user_id});
-                        insert into profile(userid, name, sname) values ('{user_id}', '{mess4}', '{mess5}')
+                        insert into profile(userid, name, sname) values ('{user_id}', '{mess_list[3]}', '{mess_list[4]}')
                         """)
             conn.commit()
             print('добавденно')
@@ -50,11 +41,10 @@ def autorization(c, addr, BUFSIZ, clients):
     conn = psycopg2.connect(dbname = 'superchat', user = 'postgres', password = '222222', port = '5432')
     cur = conn.cursor()
     while True:
-        usrnm = c.recv(BUFSIZ).decode("utf-8")
-        print(usrnm)
-        print('принято')
-        pssword = c.recv(BUFSIZ).decode("utf-8")
-        print(pssword)
+        mess = c.recv(BUFSIZ).decode("utf-8")
+        mess_list = mess.split(" ")
+        usrnm = mess_list[0]
+        pssword = mess_list[1]
         print('принято')
         cur.execute(f"select username, password from Users where username = '{usrnm}'")
         fech = cur.fetchall()
